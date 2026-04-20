@@ -3,7 +3,6 @@ from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Book, BorrowRecord, User
-from sentence_transformers import SentenceTransformer
 from django.contrib import messages
 import numpy as np
 import json
