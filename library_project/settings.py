@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-(d$b*6xp!e22a-vkvb_6#hyh0k8#y&4b%uppiox9vaczt6-cb4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -125,3 +125,13 @@ LOGIN_REDIRECT_URL = 'library_index'
 
 # Where to go after logging out
 LOGOUT_REDIRECT_URL = 'login'
+
+import os
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FOWARDED_PROTO', 'https')
+
+X_FRAME_OPTIONS = 'ALLOWALL'
+
+SESSION_COOKIES_SECURE =True
+CSRF_COOKIE_SECURE = True
