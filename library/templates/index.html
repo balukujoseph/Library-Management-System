@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Explore Books - LMS{% endblock %}
+
+{% block content %}
+    <div class="mb-12">
+        <h2 class="text-3xl font-bold text-slate-800 mb-2">Find your next read</h2>
+        <p class="text-slate-500 mb-6">Our AI understands concepts, not just keywords.</p>
+        
+        <form method="GET" class="relative">
+            <input name="search" type="text" value="{{ request.GET.search|default:'' }}"
+                   placeholder="Try 'Books about networking' or 'Programming basics'..." 
+                   class="w-full p-5 pl-7 text-lg rounded-2xl border border-slate-200 shadow-xl focus:ring-2 focus:ring-blue-500 outline-none">
+            <button type="submit" class="absolute right-4 top-4 bg-slate-900 text-white px-6 py-2 rounded-xl font-bold hover:bg-black transition">
+                Search
+            </button>
+        </form>
+    </div>
+
+    {% if ai_recommendation %}
+    <div class="mb-10 bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-6 shadow-xl border border-slate-700">
+        <div class="flex items-center gap-3 mb-3">
+            <div class="bg-blue-500 h-2 w-2 rounded-full animate-pulse"></div>
+            <span class="text-blue-400 text-xs font-black uppercase tracking-widest">AI Librarian Insights</span>
+        </div>
+        <p class="text-slate-200 leading-relaxed italic">
+            "{{ ai_recommendation }}"
+        </p>
+    </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for book in books %}
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:translate-y-[-4px] transition-all duration-300">
+                <div class="mb-4">
+                    <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded uppercase tracking-wider">{{ book.author }}</span>
+                    <h3 class="text-xl font-bold text-slate-800 mt-2">{{ book.title }}</h3>
+                </div>
+                <p class="text-slate-600 text-sm line-clamp-3 mb-6">{{ book.description }}</p>
+                
+                <div class="flex justify-between items-center border-t pt-4">
+                    <p class="text-sm font-semibold {% if book.stock > 0 %}text-green-600{% else %}text-red-400{% endif %}">
+                        {{ book.stock }} copies left
+                    </p>
+                    <form action="{% url 'borrow' book.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="{% if book.stock > 0 %}bg-slate-900 hover:bg-black{% else %}bg-slate-300 cursor-not-allowed{% endif %} text-white px-4 py-2 rounded-lg text-sm font-bold transition"
+                                {% if book.stock <= 0 %}disabled{% endif %}>
+                            Borrow
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% empty %}
+            {% if request.GET.search %}
+                <p class="text-slate-500 col-span-full text-center py-10">No books found matching that concept.</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <a href="{% url 'ai_librarian' %}" 
+       class="fixed bottom-8 right-8 group z-50 flex items-center justify-center">
+        
+        <span class="absolute right-full mr-4 bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap shadow-2xl">
+            Ask the AI Librarian
+        </span>
+
+        <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.5)] group-hover:shadow-[0_0_30px_rgba(37,99,235,0.8)] group-hover:scale-110 transition-all duration-300">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-20"></span>
+            
+            <svg class="w-8 h-8 text-white relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+        </div>
+    </a>
+{% endblock %}

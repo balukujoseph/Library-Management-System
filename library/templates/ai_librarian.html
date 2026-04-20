@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto mt-10">
+    <div class="bg-slate-900 rounded-3xl p-8 shadow-2xl border border-slate-800">
+        <div class="flex items-center gap-3 mb-8">
+            <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center animate-pulse">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+            <div>
+                <h2 class="text-white text-xl font-bold">LMS AI Librarian</h2>
+                <p class="text-slate-400 text-xs"></p>
+            </div>
+        </div>
+
+        <form method="get" class="mb-8">
+            <div class="relative">
+                <input type="text" name="ask" value="{{ query|default:'' }}" placeholder="What are you looking to learn today?" 
+                       class="w-full bg-slate-800 border border-slate-700 text-white p-4 pr-16 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500">
+                <button type="submit" class="absolute right-2 top-2 bg-blue-600 text-white p-2 px-4 rounded-xl font-bold hover:bg-blue-500 transition">
+                    Ask
+                </button>
+            </div>
+        </form>
+
+        {% if response %}
+            <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700">
+                <p class="text-blue-400 text-xs font-black uppercase tracking-widest mb-4">Librarian Response</p>
+                <div class="text-slate-200 leading-relaxed space-y-4">
+                    {{ response|linebreaks }}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
