@@ -128,7 +128,7 @@ def login_view(request):
 @user_passes_test(lambda u: u.is_staff)
 def add_book(request):
     if request.method == "POST":
-        form = BookForm(request.POST)
+        form = BookForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
            
@@ -181,3 +181,16 @@ def ai_librarian(request):
         ai_response = chat_completion.choices[0].message.content
 
     return render(request, 'ai_librarian.html', {'response': ai_response, 'query': query})
+
+def upload_note(request, book_id):
+    if request.method == 'POST':
+        note_title = request.POST.get('title')
+        uploaded_file = request.FILES.get('note_document') # This grabs the file from the device
+        
+        if uploaded_file:
+            BookNote.objects.create(
+                book_id=book_id,
+                title=note_title,
+                note_file=uploaded_file
+            )
+            return redirect('book_detail', book_id=book_id)
