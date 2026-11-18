@@ -53,11 +53,11 @@ def library_index(request):
                     messages=[
                         {
                             "role": "system",
-                            "content": f"You are the LMS Assistant. Using these books:\n{context}\nExplain how they help the user. Be consise."
+                            "content": f"You are the LMS Assistant. Using these books:\n{context}\nExplain how they help the user. Be concise."
                         },
                         {"role": "user", "content": query}
                     ],
-                    model="llama-3.1-8b-instant",  # <--- Updated model name
+                    model="llama-3.1-8b-instant",  # Updated model name
                 )
                 
                 ai_recommendation = chat_completion.choices[0].message.content
@@ -149,22 +149,19 @@ def approve_user(request, user_id):
 
 
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+
 @login_required
 def ai_librarian(request):
     query = request.GET.get('ask')
     ai_response = ""
     
     if query:
-        # 1. RETRIEVAL: Use your existing vector search to find relevant context
-        books = Book.objects.all()
-        scored_books = []
-        
-        
-        # Take the top 3 most relevant books as context
-        top_context = [f"{item[1].title} by {item[1].author}: {item[1].description}" for item in scored_books[:3]]
-        context_str = "\n".join(top_context)
+        # 1. RETRIEVAL: Fetch books to build context safely
+        books = Book.objects.all()[:3]
+        top_context = [f"{b.title} by {b.author}: {b.description}" for b in books]
+        context_str = "\n".join(top_context) if top_context else "No books currently available in the system."
 
-        # 2. GENERATION: Send the context to Groq
+        # 2. GENERATION: Send the context to Groq using the correct model
         chat_completion = client.chat.completions.create(
             messages=[
                 {
@@ -176,7 +173,7 @@ def ai_librarian(request):
                     "content": query,
                 }
             ],
-            model="llama-3.1-8b-instant", # <--- Updated model name
+            model="llama-3.1-8b-instant",  # Updated model name
         )
         ai_response = chat_completion.choices[0].message.content
 
