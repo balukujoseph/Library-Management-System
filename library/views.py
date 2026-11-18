@@ -148,7 +148,7 @@ def approve_user(request, user_id):
     return redirect('admin_dashboard')
 
 
-client = Groq(api_key="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")
+client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 @login_required
 def ai_librarian(request):
     query = request.GET.get('ask')
