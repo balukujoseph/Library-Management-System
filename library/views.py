@@ -57,7 +57,7 @@ def library_index(request):
                         },
                         {"role": "user", "content": query}
                     ],
-                    model="llama-3.3-70b-versatile",
+                    model="llama-3.1-8b-instant",  # <--- Updated model name
                 )
                 
                 ai_recommendation = chat_completion.choices[0].message.content
@@ -176,7 +176,7 @@ def ai_librarian(request):
                     "content": query,
                 }
             ],
-            model="llama-3.3-70b-versatile", # Groq's high-speed model
+            model="llama-3.1-8b-instant", # <--- Updated model name
         )
         ai_response = chat_completion.choices[0].message.content
 
